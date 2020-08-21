@@ -49,14 +49,13 @@ function AddCity(props) {
 
   const { states, districts } = useSelector(state => state.data);
 
-  const [city, setCity] = useState();
-  const [state, setState] = useState();
-  const [district, setDistrict] = useState();
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [district, setDistrict] = useState("");
   const [formError, setFormError] = useState(false);
   const [errorMessage, setErrormessage] = useState();
 
   const onSubmit = e => {
-    debugger;
     e.preventDefault();
     if (!city) {
       setErrormessage("City Cannot Be Empty");
@@ -65,7 +64,7 @@ function AddCity(props) {
       setErrormessage("State Cannot Be Empty");
       setFormError(true);
     } else if (!district) {
-      setErrormessage("district Cannot Be Empty");
+      setErrormessage("District Cannot Be Empty");
       setFormError(true);
     } else {
       dispatch(addCity({ city, state, district }));
@@ -81,11 +80,7 @@ function AddCity(props) {
         <CloseIcon />
       </div>
       <h2>Add City</h2>
-      <form
-        className="w-percent-100 flex-full"
-        autoComplete="off"
-        onSubmit={onSubmit}
-      >
+      <form autoComplete="off" onSubmit={onSubmit}>
         <TextField
           id="city"
           value={city}
@@ -96,28 +91,30 @@ function AddCity(props) {
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel>State</InputLabel>
           <Select
-            labelId="demo-simple-select-outlined-label"
             id="State"
             value={state}
             onChange={e => setState(e.target.value)}
             label="Age"
           >
-            {states.map(state => (
-              <MenuItem value={state}>{state}</MenuItem>
+            {states.map((state, stateIndex) => (
+              <MenuItem value={state} key={stateIndex}>
+                {state}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel>District</InputLabel>
           <Select
-            labelId="demo-simple-select-outlined-label"
             id="District"
             value={district}
             onChange={e => setDistrict(e.target.value)}
             label="Age"
           >
-            {districts.map(districtEle => (
-              <MenuItem value={districtEle}>{districtEle}</MenuItem>
+            {districts.map((districtEle, districtIndex) => (
+              <MenuItem value={districtEle} key={districtIndex}>
+                {districtEle}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

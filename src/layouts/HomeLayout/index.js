@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link as RouterLink } from "react-router-dom";
 import clsx from "clsx";
@@ -119,10 +119,6 @@ const useStyles = makeStyles(theme => ({
   },
   listItem: {
     borderRadius: "4px",
-    // "&:focus": {
-    //   boxShadow: `0 12px 20px -10px rgba(0, 172, 193,.28), 0 4px 20px 0 rgba(0, 0, 0,.12), 0 7px 8px -5px rgba(0, 172, 193,.2)`,
-    //   backgroundColor: "#00acc1"
-    // },
     "&:hover": {
       boxShadow: `0 12px 20px -10px rgba(0, 172, 193,.28), 0 4px 20px 0 rgba(0, 0, 0,.12), 0 7px 8px -5px rgba(0, 172, 193,.2)`,
       backgroundColor: "#00acc1"
@@ -136,11 +132,12 @@ const useStyles = makeStyles(theme => ({
 
 function DashboardLayout(props) {
   const { window, children } = props;
+
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const [currentNav, setCurrentNav] = useState(navs.ALL);
+  const [currentNav, setCurrentNav] = useState();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -182,7 +179,7 @@ function DashboardLayout(props) {
         </RouterLink>
 
         <RouterLink
-          to="/Shortlisted"
+          to="/shortlisted"
           style={{ textDecoration: "none", color: "white" }}
         >
           <div className={classes.listItemMr}>
@@ -210,6 +207,18 @@ function DashboardLayout(props) {
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
+
+  useEffect(() => {
+    const {
+      location: { pathname }
+    } = props;
+
+    if (pathname.replace("/", "").toLowerCase() === "all") {
+      setCurrentNav(navs.ALL);
+    } else if (pathname.replace("/", "").toLowerCase() === "shortlisted") {
+      setCurrentNav(navs.SHORLISTED);
+    }
+  }, [props]);
 
   return (
     <div className={classes.root}>

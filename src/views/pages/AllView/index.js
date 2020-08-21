@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import throttle from "lodash/throttle";
 
 import {
   Container,
@@ -16,11 +15,20 @@ import {
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from "@material-ui/icons/Add";
+import Alert from "@material-ui/lab/Alert";
+import DeleteIcon from "@material-ui/icons/Delete";
+import ReplayIcon from "@material-ui/icons/Replay";
 
 import SplashScreen from "../../../component/SplashScreen";
 
 import useIsMountedRef from "../../../hooks/useIsMountedRef";
-import { getData, setFIlteredData } from "../../../actions/dataActions";
+import {
+  getData,
+  setFIlteredData,
+  shorlistData,
+  removeSingleData,
+  resetUserActions
+} from "../../../actions/dataActions";
 import CustomTable from "../../../component/CustomTable";
 import AddCity from "../../../component/AddCity";
 
@@ -65,17 +73,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const columns = [
-  { id: "State", label: "State" },
-  { id: "City", label: "City" },
-  { id: "District", label: "District" },
-  { id: "action", label: "Action" }
-];
-
 function AllView() {
   const classes = useStyles();
 
-  const [searchValue, setSearchValue] = useState();
+  const [searchValue, setSearchValue] = useState("");
 
   const [modalState, setModalState] = React.useState(false);
 
@@ -87,11 +88,22 @@ function AllView() {
     setModalState(false);
   };
 
+  const onSubmit = e => {
+    e.preventDefault();
+    filterSearch();
+  };
+
   const isMountedRef = useIsMountedRef();
+
   const dispatch = useDispatch();
-  const { locationData, filteredLocationData } = useSelector(
-    state => state.data
-  );
+
+  const {
+    locationData,
+    filteredLocationData,
+    removedData,
+    shortlistedSingleData,
+    searchResultNotFound
+  } = useSelector(state => state.data);
 
   const filterSearch = () => {
     dispatch(setFIlteredData(searchValue));
@@ -107,37 +119,103 @@ function AllView() {
     }
   }, [dispatch, isMountedRef]);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  const removeRowData = index => {
+    dispatch(removeSingleData({ index }));
+  };
 
-  if (!locationData) {
+  const shortListData = index => {
+    dispatch(shorlistData({ index }));
+  };
+
+  useEffect(() => {
+    if (!locationData.length) {
+      loadData();
+    }
+  }, [loadData, locationData, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetUserActions());
+    };
+  }, []);
+
+  if (!locationData.length) {
     return <SplashScreen />;
   }
 
-  const tableRows = filteredLocationData || locationData;
+  const tableRows = filteredLocationData.length
+    ? filteredLocationData
+    : locationData;
+
+  const columns = [
+    { id: "State", label: "State" },
+    { id: "City", label: "City" },
+    { id: "District", label: "District" },
+    {
+      id: "action",
+      label: "Action",
+      contents: [
+        {
+          actionContent: (
+            <Button variant="outlined" color="primary">
+              Shortlist
+            </Button>
+          ),
+          actionEvent: index => {
+            shortListData(index);
+          }
+        },
+        {
+          actionContent: <DeleteIcon />,
+          actionEvent: index => {
+            removeRowData(index);
+          }
+        }
+      ]
+    }
+  ];
 
   return (
     <Container maxWidth="lg">
       <Box display="flex" justifyContent="space-between" m={1} p={1}>
         <Box p={1}>
-          <Paper component="form" className={classes.searchRoot}>
-            <InputBase
-              className={classes.input}
-              value={searchValue}
-              placeholder="Search Cities,States,Districts"
-              inputProps={{ "aria-label": "Search Cities,States,Districts" }}
-              onChange={handleSearchChange}
-            />
-            <IconButton
-              // type="submit"
-              className={classes.iconButton}
-              aria-label="search"
-              onClick={filterSearch}
-            >
-              <SearchIcon />
-            </IconButton>
-          </Paper>
+          <Box display="flex">
+            <form autoComplete="off" onSubmit={onSubmit}>
+              <Paper className={classes.searchRoot}>
+                <InputBase
+                  className={classes.input}
+                  value={searchValue}
+                  placeholder="Search Cities,States,Districts"
+                  inputProps={{
+                    "aria-label": "Search Cities,States,Districts"
+                  }}
+                  onChange={handleSearchChange}
+                />
+                <IconButton
+                  // type="submit"
+                  className={classes.iconButton}
+                  aria-label="search"
+                  onClick={filterSearch}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Paper>
+            </form>
+            <Box p={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.button}
+                startIcon={<ReplayIcon />}
+                onClick={() => {
+                  setSearchValue("");
+                  dispatch(resetUserActions());
+                }}
+              >
+                Reset Search
+              </Button>
+            </Box>
+          </Box>
         </Box>
         <Box p={1}>
           <Button
@@ -151,6 +229,21 @@ function AllView() {
           </Button>
         </Box>
       </Box>
+      {removedData && (
+        <Box display="flex" m={1} p={1}>
+          <Alert severity="error">{`Removed Data  City='${removedData.City}'  State='${removedData.State}'  District='${removedData.District}' successfully`}</Alert>
+        </Box>
+      )}
+      {shortlistedSingleData && (
+        <Box display="flex" m={1} p={1}>
+          <Alert severity="success">{`Shortlisted Data  City='${shortlistedSingleData.City}'  State='${shortlistedSingleData.State}'  District='${shortlistedSingleData.District}' successfully`}</Alert>
+        </Box>
+      )}
+      {searchResultNotFound && (
+        <Box display="flex" m={1} p={1}>
+          <Alert severity="info">No Data Matched the Search</Alert>
+        </Box>
+      )}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

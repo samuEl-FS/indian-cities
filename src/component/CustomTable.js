@@ -15,7 +15,8 @@ const useStyles = makeStyles({
   },
   container: {
     maxHeight: 600
-  }
+  },
+  action: { display: "flex" }
 });
 
 export default function CustomTable(props) {
@@ -58,6 +59,25 @@ export default function CustomTable(props) {
                   <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
                     {columns.map((column, columnIndex) => {
                       const value = row[column.id];
+                      if (column.id === "action") {
+                        return (
+                          <TableCell
+                            className={classes.action}
+                            key={columnIndex}
+                            align={column.align}
+                          >
+                            {column.contents.map((content, contentIndex) => (
+                              <div
+                                onClick={() => content.actionEvent(rowIndex)}
+                                align={content.align}
+                                key={contentIndex}
+                              >
+                                {content.actionContent}
+                              </div>
+                            ))}
+                          </TableCell>
+                        );
+                      }
                       return (
                         <TableCell key={columnIndex} align={column.align}>
                           {column.format && typeof value === "number"
