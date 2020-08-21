@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Container, makeStyles } from "@material-ui/core";
+import { Container } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -9,18 +9,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { removeShorlistedData } from "../../../actions/dataActions";
 import CustomTable from "../../../component/CustomTable";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.dark,
-    minHeight: "100%",
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(3)
-  }
-}));
-
 function ShortlistedView() {
-  const classes = useStyles();
-
   const dispatch = useDispatch();
 
   const { shortlistedData } = useSelector(state => state.data);

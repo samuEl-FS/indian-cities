@@ -137,7 +137,7 @@ function AllView() {
     return () => {
       dispatch(resetUserActions());
     };
-  }, []);
+  }, [dispatch]);
 
   if (!locationData.length) {
     return <SplashScreen />;
