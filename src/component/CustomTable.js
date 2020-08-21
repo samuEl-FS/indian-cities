@@ -16,7 +16,11 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 600
   },
-  action: { display: "flex" }
+  action: {
+    display: "flex",
+    justifyContent: "space-evenly",
+    alignItems: "center"
+  }
 });
 
 export default function CustomTable(props) {

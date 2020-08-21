@@ -119,7 +119,7 @@ const dataReducer = (state = initialState, action) => {
           : [...state.locationData];
         const removedData = temp.splice(index, 1);
         const tempShortlistedData = { ...state.shortlistedData };
-        delete tempShortlistedData[removedData[0].District];
+        delete tempShortlistedData[removedData[0].City];
 
         if (state.filteredLocationData.length) {
           draft.filteredLocationData = temp;
@@ -149,7 +149,7 @@ const dataReducer = (state = initialState, action) => {
           shortlistedSingleData = { ...state.locationData[index] };
         }
         draft.removedData = null;
-        draft.shortlistedData = keyBy(temp, "District");
+        draft.shortlistedData = keyBy(temp, "City");
         draft.shortlistedSingleData = shortlistedSingleData;
       });
     }
@@ -162,7 +162,7 @@ const dataReducer = (state = initialState, action) => {
         const temp = [...Object.values(state.shortlistedData)];
         temp.splice(index, 1);
         if (temp.length) {
-          draft.shortlistedData = keyBy(temp, "District");
+          draft.shortlistedData = keyBy(temp, "City");
         } else {
           draft.shortlistedData = null;
         }
