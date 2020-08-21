@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Container } from "@material-ui/core";
+import { Container, Box } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -19,7 +19,17 @@ function ShortlistedView() {
   };
 
   if (!shortlistedData) {
-    return <Alert severity="info">No shortlisted Data Available</Alert>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={2}
+        //p={1}
+      >
+        <Alert severity="info">No shortlisted Data Available</Alert>;
+      </Box>
+    );
   }
 
   const tableRows = Object.values(shortlistedData);
@@ -46,7 +56,15 @@ function ShortlistedView() {
 
   return (
     <Container maxWidth="lg">
-      <CustomTable columns={columns} rows={tableRows} />
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={2}
+        //p={1}
+      >
+        <CustomTable columns={columns} rows={tableRows} />
+      </Box>
     </Container>
   );
 }

@@ -3,6 +3,10 @@ import PropTypes from "prop-types";
 import { Link as RouterLink } from "react-router-dom";
 import clsx from "clsx";
 
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import Toolbar from "@material-ui/core/Toolbar";
+import AppBar from "@material-ui/core/AppBar";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
@@ -34,6 +38,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   appBar: {
+    backgroundColor: "#00acc1",
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth
@@ -76,7 +81,10 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: "56px"
+    }
   },
   drawerContent: {
     height: "100%",
@@ -222,6 +230,21 @@ function DashboardLayout(props) {
 
   return (
     <div className={classes.root}>
+      <Hidden smUp implementation="css">
+        <AppBar position="fixed" className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+      </Hidden>
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">

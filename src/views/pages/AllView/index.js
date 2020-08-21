@@ -44,7 +44,10 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center",
     width: 400,
-    marginBottom: "30px"
+    //marginBottom: "30px",
+    [theme.breakpoints.down("sm")]: {
+      width: "150px"
+    }
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -177,9 +180,15 @@ function AllView() {
 
   return (
     <Container maxWidth="lg">
-      <Box display="flex" justifyContent="space-between" m={1} p={1}>
-        <Box p={1}>
-          <Box display="flex">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        m={1}
+        //p={1}
+      >
+        <Box>
+          <Box display="flex" alignItems="center">
             <form autoComplete="off" onSubmit={onSubmit}>
               <Paper className={classes.searchRoot}>
                 <InputBase
