@@ -9,6 +9,7 @@ export const REMOVE_SINGLE_DATA = "REMOVE_SINGLE_DATA";
 export const SHORLIST_DATA = "SHORLIST_DATA";
 export const REMOVE_SHORLIST_DATA = "REMOVE_SHORLIST_DATA";
 export const RESET_USER_ACTIONS = "RESET_USER_ACTIONS";
+export const SET_SHORTLISTED_FILTERED_DATA = "SET_SHORTLISTED_FILTERED_DATA";
 
 export function getData() {
   return async dispatch => {
@@ -129,6 +130,21 @@ export function resetUserActions() {
     try {
       dispatch({
         type: RESET_USER_ACTIONS
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+}
+
+export function setShortListFIlteredData(filterValue) {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: SET_SHORTLISTED_FILTERED_DATA,
+        payload: {
+          filterValue
+        }
       });
     } catch (error) {
       throw error;

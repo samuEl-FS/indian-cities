@@ -10,7 +10,8 @@ import {
   REMOVE_SINGLE_DATA,
   REMOVE_SHORLIST_DATA,
   SHORLIST_DATA,
-  RESET_USER_ACTIONS
+  RESET_USER_ACTIONS,
+  SET_SHORTLISTED_FILTERED_DATA
 } from "../actions/dataActions";
 
 const initialState = {
@@ -21,7 +22,10 @@ const initialState = {
   shortlistedData: null,
   removedData: null,
   shortlistedSingleData: null,
-  searchResultNotFound: false
+  searchResultNotFound: false,
+  filteredShortListedData: [],
+  filteredSearchResultNotFound: false,
+  removedShotlistedData: null
 };
 
 const dataReducer = (state = initialState, action) => {
@@ -143,11 +147,26 @@ const dataReducer = (state = initialState, action) => {
         let shortlistedSingleData = null;
         if (state.filteredLocationData.length) {
           temp.push({ ...state.filteredLocationData[index] });
+          const updateFilteredLocationData = [...state.filteredLocationData];
+
+          updateFilteredLocationData[index] = {
+            ...updateFilteredLocationData[index],
+            shortListed: true
+          };
+
           shortlistedSingleData = { ...state.filteredLocationData[index] };
+          draft.filteredLocationData = updateFilteredLocationData;
         } else {
           temp.push({ ...state.locationData[index] });
+          const updateLocationData = [...state.locationData];
+          updateLocationData[index] = {
+            ...updateLocationData[index],
+            shortListed: true
+          };
           shortlistedSingleData = { ...state.locationData[index] };
+          draft.locationData = updateLocationData;
         }
+
         draft.removedData = null;
         draft.shortlistedData = keyBy(temp, "City");
         draft.shortlistedSingleData = shortlistedSingleData;
@@ -160,9 +179,36 @@ const dataReducer = (state = initialState, action) => {
       } = action;
       return produce(state, draft => {
         const temp = [...Object.values(state.shortlistedData)];
-        temp.splice(index, 1);
+        const removedShotlistedData = temp.splice(index, 1);
+        if (state.filteredLocationData.length) {
+          const updateFilteredLocationData = [...state.filteredLocationData];
+          const removedIndex = updateFilteredLocationData.findIndex(
+            ele => ele.City === removedShotlistedData[0].City
+          );
+
+          updateFilteredLocationData[removedIndex] = {
+            ...updateFilteredLocationData[removedIndex],
+            shortListed: false
+          };
+
+          draft.filteredLocationData = updateFilteredLocationData;
+        } else {
+          const updateLocationData = [...state.locationData];
+          const removedIndex = updateLocationData.findIndex(
+            ele => ele.City === removedShotlistedData[0].City
+          );
+
+          updateLocationData[removedIndex] = {
+            ...updateLocationData[removedIndex],
+            shortListed: false
+          };
+
+          draft.locationData = updateLocationData;
+        }
+
         if (temp.length) {
           draft.shortlistedData = keyBy(temp, "City");
+          draft.removedShotlistedData = removedShotlistedData[0];
         } else {
           draft.shortlistedData = null;
         }
@@ -173,8 +219,46 @@ const dataReducer = (state = initialState, action) => {
       return produce(state, draft => {
         draft.shortlistedSingleData = null;
         draft.removedData = null;
+        draft.removedShotlistedData = null;
         draft.searchResultNotFound = false;
         draft.filteredLocationData = [];
+        draft.filteredSearchResultNotFound = false;
+        draft.filteredShortListedData = [];
+      });
+    }
+
+    case SET_SHORTLISTED_FILTERED_DATA: {
+      const {
+        payload: { filterValue }
+      } = action;
+      return produce(state, draft => {
+        const { shortlistedData } = state;
+        const filteredShortListedData = [];
+        if (filterValue) {
+          Object.values(shortlistedData).forEach(ele => {
+            if (ele.State.toLowerCase().includes(filterValue.toLowerCase())) {
+              filteredShortListedData.push(ele);
+            } else if (
+              ele.City.toLowerCase().includes(filterValue.toLowerCase())
+            ) {
+              filteredShortListedData.push(ele);
+            } else if (
+              ele.District.toLowerCase().includes(filterValue.toLowerCase())
+            ) {
+              filteredShortListedData.push(ele);
+            }
+          });
+        }
+
+        if (!filteredShortListedData.length && filterValue) {
+          draft.filteredSearchResultNotFound = true;
+        } else {
+          draft.filteredSearchResultNotFound = false;
+        }
+
+        draft.removedData = null;
+
+        draft.filteredShortListedData = filteredShortListedData;
       });
     }
 

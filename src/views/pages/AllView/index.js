@@ -18,6 +18,8 @@ import AddIcon from "@material-ui/icons/Add";
 import Alert from "@material-ui/lab/Alert";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ReplayIcon from "@material-ui/icons/Replay";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import TableCell from "@material-ui/core/TableCell";
 
 import SplashScreen from "../../../component/SplashScreen";
 
@@ -56,16 +58,6 @@ const useStyles = makeStyles(theme => ({
   iconButton: {
     padding: 10
   },
-  divider: {
-    height: 28,
-    margin: 4
-  },
-  container: {
-    [theme.breakpoints.up("lg")]: {
-      paddingLeft: 64,
-      paddingRight: 64
-    }
-  },
   button: {
     margin: theme.spacing(1)
   },
@@ -73,6 +65,11 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
+  },
+  action: {
+    display: "flex",
+    justifyContent: "space-evenly",
+    alignItems: "center"
   }
 }));
 
@@ -154,28 +151,7 @@ function AllView() {
     { id: "State", label: "State" },
     { id: "City", label: "City" },
     { id: "District", label: "District" },
-    {
-      id: "action",
-      label: "Action",
-      contents: [
-        {
-          actionContent: (
-            <Button variant="outlined" color="primary">
-              Shortlist
-            </Button>
-          ),
-          actionEvent: index => {
-            shortListData(index);
-          }
-        },
-        {
-          actionContent: <DeleteIcon />,
-          actionEvent: index => {
-            removeRowData(index);
-          }
-        }
-      ]
-    }
+    { id: "Action", label: "Action", align: "center" }
   ];
 
   return (
@@ -185,7 +161,6 @@ function AllView() {
         justifyContent="space-between"
         alignItems="center"
         m={1}
-        //p={1}
       >
         <Box>
           <Box display="flex" alignItems="center">
@@ -201,10 +176,9 @@ function AllView() {
                   onChange={handleSearchChange}
                 />
                 <IconButton
-                  // type="submit"
+                  type="submit"
                   className={classes.iconButton}
                   aria-label="search"
-                  onClick={filterSearch}
                 >
                   <SearchIcon />
                 </IconButton>
@@ -269,7 +243,50 @@ function AllView() {
           <AddCity onClose={handleClose} />
         </Fade>
       </Modal>
-      <CustomTable columns={columns} rows={tableRows} />
+      <CustomTable
+        columns={columns}
+        rows={tableRows}
+        renderRows={(row, rowIndex) =>
+          columns.map((column, columnIndex) => {
+            const value = row[column.id];
+            if (column.id === "Action") {
+              return (
+                <TableCell
+                  className={classes.action}
+                  key={columnIndex}
+                  align={column.align}
+                >
+                  <div onClick={() => shortListData(rowIndex)}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      disabled={row.shortListed}
+                    >
+                      {row.shortListed ? (
+                        <>
+                          <CheckCircleIcon /> Shortlisted
+                        </>
+                      ) : (
+                        "Shortlist"
+                      )}
+                    </Button>
+                  </div>
+                  <div onClick={() => removeRowData(rowIndex)}>
+                    <DeleteIcon />
+                  </div>
+                </TableCell>
+              );
+            }
+            return (
+              <TableCell key={columnIndex} align={column.align}>
+                {column.format && typeof value === "number"
+                  ? column.format(value)
+                  : value}
+              </TableCell>
+            );
+          })
+        }
+      />
     </Container>
   );
 }

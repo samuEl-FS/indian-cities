@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 
 export default function CustomTable(props) {
   const classes = useStyles();
-  const { rows, columns } = props;
+  const { rows, columns, renderRows } = props;
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(100);
 
@@ -58,41 +58,11 @@ export default function CustomTable(props) {
           <TableBody>
             {rows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, rowIndex) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
-                    {columns.map((column, columnIndex) => {
-                      const value = row[column.id];
-                      if (column.id === "action") {
-                        return (
-                          <TableCell
-                            className={classes.action}
-                            key={columnIndex}
-                            align={column.align}
-                          >
-                            {column.contents.map((content, contentIndex) => (
-                              <div
-                                onClick={() => content.actionEvent(rowIndex)}
-                                align={content.align}
-                                key={contentIndex}
-                              >
-                                {content.actionContent}
-                              </div>
-                            ))}
-                          </TableCell>
-                        );
-                      }
-                      return (
-                        <TableCell key={columnIndex} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+              .map((row, rowIndex) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
+                  {renderRows(row, rowIndex)}
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
