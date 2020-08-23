@@ -70,6 +70,9 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     justifyContent: "space-evenly",
     alignItems: "center"
+  },
+  shortListed: {
+    color: "green!important"
   }
 }));
 
@@ -258,9 +261,10 @@ function AllView() {
                 >
                   <div onClick={() => shortListData(rowIndex)}>
                     <Button
-                      variant="outlined"
+                      variant={row.shortListed ? "text" : "outlined"}
                       color="primary"
                       disabled={row.shortListed}
+                      className={row.shortListed ? classes.shortListed : ""}
                     >
                       {row.shortListed ? (
                         <>
