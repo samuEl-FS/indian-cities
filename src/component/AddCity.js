@@ -81,13 +81,6 @@ function AddCity(props) {
       </div>
       <h2>Add City</h2>
       <form autoComplete="off" onSubmit={onSubmit}>
-        <TextField
-          id="city"
-          value={city}
-          label="City"
-          variant="outlined"
-          onChange={e => setCity(e.target.value)}
-        />
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel>State</InputLabel>
           <Select
@@ -118,6 +111,13 @@ function AddCity(props) {
             ))}
           </Select>
         </FormControl>
+        <TextField
+          id="city"
+          value={city}
+          label="City"
+          variant="outlined"
+          onChange={e => setCity(e.target.value)}
+        />
         <div className={classes.submit}>
           <Button type="submit" variant="outlined" color="primary">
             Add City
