@@ -4,14 +4,14 @@ import keyBy from "lodash/keyBy";
 import {
   GET_DATA,
   SET_STATES,
-  SET_DISTRICTS,
   SET_FILTERED_DATA,
   ADD_CITY,
   REMOVE_SINGLE_DATA,
   REMOVE_SHORLIST_DATA,
   SHORLIST_DATA,
   RESET_USER_ACTIONS,
-  SET_SHORTLISTED_FILTERED_DATA
+  SET_SHORTLISTED_FILTERED_DATA,
+  GET_DISTRICT_FROM_STATE
 } from "../actions/dataActions";
 
 const initialState = {
@@ -48,12 +48,19 @@ const dataReducer = (state = initialState, action) => {
       });
     }
 
-    case SET_DISTRICTS: {
+    case GET_DISTRICT_FROM_STATE: {
       const {
-        payload: { districts }
+        payload: { selectedState }
       } = action;
       return produce(state, draft => {
-        draft.districts = [...new Set(districts)].sort();
+        const temp = [...state.locationData];
+        const districts = [];
+        temp.forEach(ele => {
+          if (ele.State === selectedState) {
+            districts.push(ele.District);
+          }
+        });
+        draft.districts = districts;
       });
     }
 

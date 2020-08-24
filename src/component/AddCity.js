@@ -12,7 +12,7 @@ import Alert from "@material-ui/lab/Alert";
 import CloseIcon from "@material-ui/icons/Close";
 import { useDispatch, useSelector } from "react-redux";
 
-import { addCity } from "../actions/dataActions";
+import { addCity, getDistrictFromState } from "../actions/dataActions";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,7 +51,7 @@ function AddCity(props) {
 
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [district, setDistrict] = useState("");
+  const [district, setDistrict] = useState();
   const [formError, setFormError] = useState(false);
   const [errorMessage, setErrormessage] = useState();
 
@@ -86,7 +86,10 @@ function AddCity(props) {
           <Select
             id="State"
             value={state}
-            onChange={e => setState(e.target.value)}
+            onChange={e => {
+              setState(e.target.value);
+              dispatch(getDistrictFromState(e.target.value));
+            }}
             label="Age"
           >
             {states.map((state, stateIndex) => (
@@ -103,12 +106,14 @@ function AddCity(props) {
             value={district}
             onChange={e => setDistrict(e.target.value)}
             label="Age"
+            disabled={!districts}
           >
-            {districts.map((districtEle, districtIndex) => (
-              <MenuItem value={districtEle} key={districtIndex}>
-                {districtEle}
-              </MenuItem>
-            ))}
+            {districts &&
+              districts.map((districtEle, districtIndex) => (
+                <MenuItem value={districtEle} key={districtIndex}>
+                  {districtEle}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
         <TextField
