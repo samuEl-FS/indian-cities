@@ -60,7 +60,8 @@ const dataReducer = (state = initialState, action) => {
             districts.push(ele.District);
           }
         });
-        draft.districts = districts;
+
+        draft.districts = [...new Set(districts)].sort();
       });
     }
 

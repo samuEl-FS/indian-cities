@@ -15,7 +15,7 @@ export function getData() {
   return async dispatch => {
     try {
       const states = [];
-      // const districts = [];
+
       const data = await dataService.getData();
 
       dispatch({
